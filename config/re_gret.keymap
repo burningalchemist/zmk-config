@@ -1,0 +1,161 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
+
+#define SYM_L 1
+#define NAV_L 2
+#define NUM_L 3
+#define SYS_L 4
+
+/ {
+    behaviors {
+        hm: homerow_mods {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            tapping-term-ms = <200>;
+            flavor = "tap-preferred";
+            bindings = <&kp>, <&kp>;
+        };
+
+        brkts: brackets {
+            compatible = "zmk,behavior-tap-dance";
+            label = "BRKTS";
+            #binding-cells = <0>;
+            bindings = <&kp LBKT>, <&kp RBKT>;
+
+            tapping-term-ms = <180>;
+        };
+
+        curl_brkts: curl_brkts {
+            compatible = "zmk,behavior-tap-dance";
+            label = "CURL_BRKTS";
+            #binding-cells = <0>;
+            bindings = <&kp LBRC>, <&kp RBRC>;
+
+            tapping-term-ms = <180>;
+        };
+
+        ht: ht {
+            compatible = "zmk,behavior-hold-tap";
+            label = "HT";
+            bindings = <&kp>, <&kp>;
+
+            #binding-cells = <2>;
+            tapping-term-ms = <165>;
+            flavor = "tap-preferred";
+            quick-tap-ms = <200>;
+        };
+
+        bslh_pipe: bslh_pipe {
+            compatible = "zmk,behavior-tap-dance";
+            label = "BSLH_PIPE";
+            #binding-cells = <0>;
+            bindings = <&kp BSLH>, <&kp PIPE>;
+
+            tapping-term-ms = <200>;
+        };
+
+        music: music {
+            compatible = "zmk,behavior-tap-dance";
+            label = "MUSIC";
+            #binding-cells = <0>;
+            bindings = <&kp C_PLAY_PAUSE>, <&kp C_NEXT>, <&kp C_PREV>;
+        };
+    };
+
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+
+        tri_layer {
+            if-layers = <1 2>;
+            then-layer = <3>;
+        };
+    };
+
+    #define COMBO_IDLE 175
+
+    combos {
+        compatible = "zmk,combos";
+
+        // Activate system layer on inner thumbs
+
+        bsp {
+            key-positions = <26 27>;
+            bindings = <&kp BSPC>;
+            require-prior-idle-ms = <COMBO_IDLE>;
+        };
+
+        // Brackets and parens
+    };
+
+    macros {
+        vim_nt: vim_nt {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp G &kp T>;
+            label = "VIM_NT";
+        };
+
+        vim_pt: vim_pt {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp G &kp LS(T)>;
+            label = "VIM_PT";
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            display-name = "Base";
+            bindings = <
+&kp Q        &kp W        &kp E  &kp R           &kp T  &kp Y  &kp U           &kp I      &kp O        &kp P
+&kp A        &mt LCTRL S  &kp D  &kp F           &kp G  &kp H  &kp J           &kp K      &mt RCTRL L  &kp SEMI
+&mt LSHFT Z  &kp X        &kp C  &kp V           &kp B  &kp N  &kp M           &kp COMMA  &kp DOT      &mt RSHFT FSLH
+                                 &mt LGUI SPACE  &mo 2  &mo 1  &mt RALT ENTER
+            >;
+        };
+
+        sym_layer {
+            display-name = "Symbol";
+            bindings = <
+&kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp NUMBER_7   &kp NUMBER_8  &kp NUMBER_9  &kp NUMBER_0
+&kp EXCL      &kp AT        &kp HASH      &kp DLLR      &kp PRCNT     &kp CARET     &sk AMPS       &sk STAR      &sk LPAR      &sk RPAR
+&none         &brkts        &curl_brkts   &kp MINUS     &ht DQT SQT   &bslh_pipe    &kp LS(MINUS)  &ht DQT SQT   &kp EQUAL     &trans
+                                          &trans        &trans        &trans        &trans
+            >;
+        };
+
+        nav_layer {
+            display-name = "Nav";
+            bindings = <
+&kp ESC  &none          &none          &kp LC(LS(LG(NUMBER_4)))  &kp LG(LS(NUMBER_4))  &kp PG_UP  &kp HOME          &kp UP            &kp END    &kp BACKSPACE
+&kp TAB  &kp LG(SPACE)  &kp BACKSPACE  &kp ENTER                 &none                 &kp PG_DN  &kp LEFT          &kp DOWN          &kp RIGHT  &kp DEL
+&trans   &kp LC(SPACE)  &vim_pt        &vim_nt                   &caps_word            &none      &kp LG(LS(LBKT))  &kp LG(LS(RBKT))  &none      &trans
+                                       &trans                    &trans                &trans     &trans
+            >;
+        };
+
+        num_layer {
+            display-name = "Number";
+            bindings = <
+&kp F9  &kp F10  &kp F11  &kp F12  &music  &kp KP_DIVIDE    &kp KP_N7     &kp KP_N8  &kp KP_N9        &kp KP_MINUS
+&kp F5  &kp F6   &kp F7   &kp F8   &mo 4   &kp KP_ASTERISK  &kp KP_N4     &kp KP_N5  &kp KP_NUMBER_6  &kp KP_PLUS
+&kp F1  &kp F2   &kp F3   &kp F4   &none   &kp KP_NUMBER_0  &kp KP_N1     &kp KP_N2  &kp KP_N3        &kp KP_DOT
+                          &none    &trans  &trans           &kp KP_ENTER
+            >;
+        };
+
+        system_layer {
+            display-name = "System";
+            bindings = <
+&bootloader  &studio_unlock  &none  &none   &none   &none   &none         &none         &none  &none
+&none        &none           &none  &none   &none   &none   &kp C_VOL_DN  &kp C_VOL_UP  &none  &none
+&bt BT_CLR   &none           &none  &none   &none   &none   &none         &none         &none  &none
+                                    &trans  &trans  &trans  &trans
+            >;
+        };
+    };
+};
+
