@@ -78,6 +78,11 @@
             require-prior-idle-ms = <COMBO_IDLE>;
         };
 
+        bootloader {
+            bindings = <&bootloader>;
+            key-positions = <0 9>;
+        };
+
         // Brackets and parens
     };
 
